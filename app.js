@@ -1,15 +1,17 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
+app.use(cors('*'));
 
 let todos = [
-    { id: 1, task: 'Learn Node.js', completed: false},
-    { id: 2, task: 'Build CRUD API', completed: false }
+    { id: 1, task: 'Learn Node.js', completed: false, DueDate: null},
+    { id: 2, task: 'Build CRUD API', completed: false, DueDate: null }
 ]
 
 // read all todos
@@ -20,11 +22,11 @@ app.get('/todos', (req, res) => {
 
 // create a new todo
 app.post('/todos/add_todo', (req, res) => {
-    const { task, completed } = req.body
+    const { task, completed, DueDate } = req.body
     if (!task) {
         return res.status(400).json({ error: 'Task is required' })
     }
-    const newTodo = { id: todos.length + 1, task, completed }
+    const newTodo = { id: todos.length + 1, task, completed, DueDate}
     todos.push(newTodo)
     res.status(201).json(newTodo)
 })
