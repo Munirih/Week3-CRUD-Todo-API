@@ -30,8 +30,18 @@ app.get('/', (req, res) => {
 // get all todos
 app.get('/todos', async (req, res, next) => {
     try {
-        const todos = await Todo.find({})
-        res.status(200).json(todos)
+        const filter = {};
+        
+        if (req.query.completed === 'true') {
+                filter.completed = true;
+        } 
+        if (req.query.completed === 'false') {
+                filter.completed = false;
+        }
+        
+        console.log("Sent to MongoDB:", filter);
+        const todos = await Todo.find(filter)
+        return res.status(200).json(todos)
     }
     catch (error) {
         next(error)
@@ -86,26 +96,6 @@ app.delete('/todos/:id', async (req, res, next) => {
     }
 })
 
-// Get Active Todos
-app.get('/todos', async (req, res, next) => {
-    try {
-        const filter = {};
-        
-        if (req.query.active === 'true') {
-                filter.completed = false;
-        } 
-        if (req.query.active === 'false') {
-                filter.completed = true;
-        }
-        
-        console.log("Sent to MongoDB:", filter);
-        const todos = await Todo.find(filter)
-        return res.status(200).json(todos)
-    }
-    catch (error) {
-        next(error)
-    }
-})
 
 // get a single todo by id
 app.get('/todos/:id', async (req, res, next) => {
